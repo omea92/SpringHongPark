@@ -7,8 +7,12 @@ import com.example.firstproject.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -35,5 +39,29 @@ public class MemberController {
         log.info(saved.toString());
 
         return "";
+    }
+
+    @GetMapping("/members/{id}")
+    public String show(@PathVariable Long id, Model model) {
+        log.info("id = " + id);
+
+        //ID 기준 데이터 조회하기
+        Member memberEntity = memberRepository.findById(id).orElse(null);
+
+        //조회결과 담은 변수를 모델에 담기
+        model.addAttribute("member", memberEntity);
+
+        return "members/show";
+    }
+
+    @GetMapping("/members")
+    public String index(Model model) {
+        //전체 데이터 조회하기
+        List<Member> memberList = memberRepository.findAll();
+
+        //조회결과 담은 변수를 모델에 담기
+        model.addAttribute("memberList", memberList);
+
+        return "members/index";
     }
 }
